@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "Stress Go",
+  "short_name": "Stress Go",
+  "description": "A peaceful digital sanctuary for relaxation, mindfulness, and targeted stress management.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F5EE",
+  "theme_color": "#244C3A",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

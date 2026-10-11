@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="128" fill="#244C3A"/>
+  <!-- Serene Lotus Leaf / Tree of Stillness -->
+  <circle cx="256" cy="256" r="140" fill="#1B3A2C" opacity="0.6"/>
+  <!-- Central Petal -->
+  <path d="M256 120 C230 190 230 270 256 340 C282 270 282 190 256 120 Z" fill="#F7F5EE"/>
+  <!-- Left Petal -->
+  <path d="M256 340 C210 320 160 250 180 180 C230 220 250 280 256 340 Z" fill="#91A88C"/>
+  <!-- Right Petal -->
+  <path d="M256 340 C302 320 352 250 332 180 C282 220 262 280 256 340 Z" fill="#91A88C"/>
+  <!-- Base Ground Curve -->
+  <path d="M190 360 C230 380 282 380 322 360" stroke="#F7F5EE" stroke-width="12" stroke-linecap="round"/>
+</svg>

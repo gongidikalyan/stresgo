@@ -1,0 +1,6 @@
+{
+  "name": "Stillora - A Peaceful Digital Sanctuary",
+  "description": "A peaceful digital sanctuary for relaxation, mindfulness, Indian classical music, nature immersion, and gentle yoga. A quiet place for your mind.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
