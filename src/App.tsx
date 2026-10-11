@@ -42,6 +42,20 @@ export default function App() {
     }
   }, [currentTheme]);
 
+  // Aggressive cleanup on APK/WebView startup to eliminate any stale cached data
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('stillora_') || k.includes('nature') || k.includes('yoga') || k.includes('listen'))) {
+            localStorage.removeItem(k);
+          }
+        }
+      }
+    } catch (_) {}
+  }, []);
+
   const handleNavigate = (tab: NavigationTab, extraId?: string) => {
     setCurrentTab(tab);
     setActiveSubId(extraId);

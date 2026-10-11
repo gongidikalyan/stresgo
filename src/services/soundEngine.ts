@@ -9,7 +9,7 @@
  * - Gentle breath pacing chimes
  */
 
-type StateListener = (state: AudioEngineState) => void;
+type StateSubscriber = (state: AudioEngineState) => void;
 
 export interface AudioEngineState {
   isPlayingTone: boolean;
@@ -38,12 +38,12 @@ class SanctuaryAudioEngine {
     masterVolume: 0.9,
   };
 
-  private listeners: Set<StateListener> = new Set();
+  private subscribers: Set<StateSubscriber> = new Set();
 
-  public subscribe(listener: StateListener): () => void {
-    this.listeners.add(listener);
-    listener(this.getState());
-    return () => this.listeners.delete(listener);
+  public subscribe(subscriber: StateSubscriber): () => void {
+    this.subscribers.add(subscriber);
+    subscriber(this.getState());
+    return () => this.subscribers.delete(subscriber);
   }
 
   public getState(): AudioEngineState {
@@ -52,7 +52,7 @@ class SanctuaryAudioEngine {
 
   private notify() {
     const s = this.getState();
-    this.listeners.forEach((fn) => fn(s));
+    this.subscribers.forEach((fn) => fn(s));
   }
 
   private ensureContext(): AudioContext {

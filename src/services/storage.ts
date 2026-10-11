@@ -1,31 +1,35 @@
 import {
   UserPreferences,
-  CustomSanctuaryPreset,
   SessionHistoryItem,
   JournalEntry,
-  NatureEnvironmentId,
 } from '../types';
 
 const STORAGE_KEYS = {
-  PREFERENCES: 'stillora_preferences_v4',
-  SANCTUARY_PRESETS: 'stillora_sanctuary_presets_v4',
-  SESSION_HISTORY: 'stillora_session_history_v4',
-  JOURNAL_ENTRIES: 'stillora_journal_entries_v4',
+  PREFERENCES: 'stressgo_preferences_v1',
+  SESSION_HISTORY: 'stressgo_session_history_v1',
+  JOURNAL_ENTRIES: 'stressgo_journal_entries_v1',
 };
+
+// Purge any legacy stillora keys from previous sessions
+if (typeof window !== 'undefined' && window.localStorage) {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('stillora_')) {
+        localStorage.removeItem(k);
+      }
+    }
+  } catch (_) {}
+}
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   theme: 'light',
   reducedMotion: false,
+  soundEnabled: true,
   masterVolume: 0.9,
-  natureVolume: 0.75,
-  musicVolume: 0.8,
-  defaultDurationMinutes: 5,
-  favoriteTrackIds: ['bansuri_yaman', 'tanpura_sa_pa'],
-  favoriteEnvironmentIds: ['forest', 'ocean'],
 };
 
 export const storageService = {
-  // Preferences
   getPreferences(): UserPreferences {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.PREFERENCES);
@@ -33,7 +37,7 @@ export const storageService = {
         return { ...DEFAULT_PREFERENCES, ...JSON.parse(data) };
       }
     } catch (e) {
-      console.warn('Storage read preferences failed', e);
+      console.warn('Storage read failed', e);
     }
     return DEFAULT_PREFERENCES;
   },
@@ -44,82 +48,9 @@ export const storageService = {
     try {
       localStorage.setItem(STORAGE_KEYS.PREFERENCES, JSON.stringify(updated));
     } catch (e) {
-      console.warn('Storage write preferences failed', e);
+      console.warn('Storage write failed', e);
     }
     return updated;
-  },
-
-  toggleFavoriteTrack(trackId: string): boolean {
-    const prefs = this.getPreferences();
-    const exists = prefs.favoriteTrackIds.includes(trackId);
-    const updated = exists
-      ? prefs.favoriteTrackIds.filter((id) => id !== trackId)
-      : [...prefs.favoriteTrackIds, trackId];
-    this.savePreferences({ favoriteTrackIds: updated });
-    return !exists;
-  },
-
-  toggleFavoriteEnvironment(envId: NatureEnvironmentId): boolean {
-    const prefs = this.getPreferences();
-    const exists = prefs.favoriteEnvironmentIds.includes(envId);
-    const updated = exists
-      ? prefs.favoriteEnvironmentIds.filter((id) => id !== envId)
-      : [...prefs.favoriteEnvironmentIds, envId];
-    this.savePreferences({ favoriteEnvironmentIds: updated });
-    return !exists;
-  },
-
-  // Custom Sanctuary Presets
-  getSanctuaryPresets(): CustomSanctuaryPreset[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.SANCTUARY_PRESETS);
-      if (data) return JSON.parse(data);
-    } catch (e) {
-      console.warn('Storage read presets failed', e);
-    }
-    return [
-      {
-        id: 'preset_morning_calm',
-        name: 'Morning Forest & Flute',
-        environmentId: 'forest',
-        soundType: 'flute',
-        durationMinutes: 10,
-        createdAt: Date.now() - 86400000,
-      },
-      {
-        id: 'preset_ocean_dusk',
-        name: 'Ocean Shore & Tanpura',
-        environmentId: 'ocean',
-        soundType: 'tanpura',
-        durationMinutes: 5,
-        createdAt: Date.now() - 43200000,
-      },
-    ];
-  },
-
-  saveSanctuaryPreset(preset: Omit<CustomSanctuaryPreset, 'id' | 'createdAt'>): CustomSanctuaryPreset {
-    const presets = this.getSanctuaryPresets();
-    const newPreset: CustomSanctuaryPreset = {
-      ...preset,
-      id: 'preset_' + Date.now(),
-      createdAt: Date.now(),
-    };
-    const updated = [newPreset, ...presets];
-    try {
-      localStorage.setItem(STORAGE_KEYS.SANCTUARY_PRESETS, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('Storage write preset failed', e);
-    }
-    return newPreset;
-  },
-
-  deleteSanctuaryPreset(id: string) {
-    const presets = this.getSanctuaryPresets().filter((p) => p.id !== id);
-    try {
-      localStorage.setItem(STORAGE_KEYS.SANCTUARY_PRESETS, JSON.stringify(presets));
-    } catch (e) {
-      console.warn('Storage delete preset failed', e);
-    }
   },
 
   // Session History
@@ -128,22 +59,22 @@ export const storageService = {
       const data = localStorage.getItem(STORAGE_KEYS.SESSION_HISTORY);
       if (data) return JSON.parse(data);
     } catch (e) {
-      console.warn('Storage read session history failed', e);
+      console.warn('Storage read history failed', e);
     }
     return [
       {
         id: 'session_sample_1',
-        title: 'Ancient Forest Sanctuary',
-        type: 'nature',
-        durationSeconds: 300,
+        title: 'Physiological Sigh',
+        type: 'stress',
+        durationSeconds: 45,
         completedAt: Date.now() - 3600000 * 2,
       },
       {
         id: 'session_sample_2',
-        title: 'Three-Minute Breathing',
+        title: '3-Minute Breathing',
         type: 'meditation',
         durationSeconds: 180,
-        completedAt: Date.now() - 3600000 * 6,
+        completedAt: Date.now() - 3600000 * 8,
       },
     ];
   },
@@ -159,7 +90,7 @@ export const storageService = {
     try {
       localStorage.setItem(STORAGE_KEYS.SESSION_HISTORY, JSON.stringify(updated));
     } catch (e) {
-      console.warn('Storage write session history failed', e);
+      console.warn('Storage write history failed', e);
     }
     return newItem;
   },
@@ -172,7 +103,7 @@ export const storageService = {
     }
   },
 
-  // Journal Entries
+  // Journal / Notes Entries
   getJournalEntries(): JournalEntry[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.JOURNAL_ENTRIES);
@@ -185,8 +116,8 @@ export const storageService = {
         id: 'sample_note_1',
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         timestamp: Date.now() - 3600000 * 12,
-        prompt: 'Daily Sanctuary Reflection',
-        content: 'Felt my breath slow down under the soft forest canopy. Ready for the day.',
+        prompt: 'Daily Pause',
+        content: 'Felt my breath slow down. Ready for the rest of today.',
       },
     ];
   },
@@ -221,7 +152,6 @@ export const storageService = {
   clearAllData() {
     try {
       localStorage.removeItem(STORAGE_KEYS.PREFERENCES);
-      localStorage.removeItem(STORAGE_KEYS.SANCTUARY_PRESETS);
       localStorage.removeItem(STORAGE_KEYS.SESSION_HISTORY);
       localStorage.removeItem(STORAGE_KEYS.JOURNAL_ENTRIES);
     } catch (e) {

@@ -124,7 +124,7 @@ export const StressToolsView: React.FC<StressToolsViewProps> = ({
   const groundingList = [
     { num: 5, label: 'SEE', prompt: 'Notice 5 things you can visually see in this room.' },
     { num: 4, label: 'TOUCH', prompt: 'Notice 4 physical textures or contact points.' },
-    { num: 3, label: 'HEAR', prompt: 'Listen closely for 3 distinct subtle sounds.' },
+    { num: 3, label: 'HEAR', prompt: 'Notice and hear 3 distinct subtle sounds in your surroundings.' },
     { num: 2, label: 'SMELL', prompt: 'Notice 2 scents or the fresh air temperature.' },
     { num: 1, label: 'HEART', prompt: 'Take 1 gentle breath and feel your presence.' },
   ];
